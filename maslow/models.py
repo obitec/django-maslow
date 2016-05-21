@@ -6,7 +6,7 @@ from django.contrib.flatpages.models import FlatPage
 from django.contrib.postgres.fields import JSONField
 from mptt.models import MPTTModel, TreeForeignKey, TreeManyToManyField
 from mptt.managers import TreeManager
-
+from reversion import revisions as reversion
 
 class NaturalManager(models.Manager):
     def get_by_natural_key(self, name):
