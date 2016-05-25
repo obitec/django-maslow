@@ -8,6 +8,7 @@ from mptt.models import MPTTModel, TreeForeignKey, TreeManyToManyField
 from mptt.managers import TreeManager
 from reversion import revisions as reversion
 
+
 class NaturalManager(models.Manager):
     def get_by_natural_key(self, name):
         return self.get(name=name)
@@ -35,6 +36,7 @@ class NaturalModel(models.Model):
 
 class DataForm(NaturalModel):
     form = models.TextField(blank=True, verbose_name=_('Data form'))
+
     # calculated_values = ArrayField(models.CharField(max_length=100))
     # action = models.CharField()
 
@@ -45,6 +47,7 @@ class DataForm(NaturalModel):
 class DataMixin(models.Model):
     description = models.TextField(verbose_name=_('Description'), blank=True)
     extra_data = JSONField(verbose_name=_('Extra data'), null=True, blank=True)
+
     # data_form = models.ForeignKey(DataForm, null=True, blank=True)
 
     class Meta:
@@ -67,7 +70,6 @@ class AuditMixin(models.Model):
 
 
 class NaturalDataModel(DataMixin, NaturalModel):
-
     class Meta:
         abstract = True
 
@@ -142,7 +144,6 @@ class Thing(MPTTModel):
 
     class Meta:
         abstract = True
-
 
 
 ONE = 1
