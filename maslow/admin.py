@@ -111,7 +111,7 @@ class MyFlatPageAdmin(FlatPageAdmin):
     form = FlatPageAdminForm
 
 
-def auto_register(app_name: str = ''):
+def auto_register(app_name: str = '', admin_site = None):
     app_models = apps.get_app_config(app_name).get_models()
     for model in app_models:
         try:
@@ -134,7 +134,10 @@ def auto_register(app_name: str = ''):
                     else:
                         list_display = ['name', 'description']
 
-            admin.site.register(model, DefaultAdmin)
+            if not admin_site:
+                admin.site.register(model, DefaultAdmin)
+            else:
+                admin_site.register(model, DefaultAdmin)
 
         except AlreadyRegistered:
             pass
