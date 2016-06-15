@@ -108,6 +108,35 @@ class MyFlatPageAdmin(FlatPageAdmin):
     form = FlatPageAdminForm
 
 
+def auto_register(app_name: str = ''):
+    app_models = apps.get_app_config(app_name).get_models()
+    for model in app_models:
+        try:
+            if getattr(model, '_mptt_meta', None):
+                classes = [MPTTAdmin, SuperAdmin, ]
+
+            else:
+                classes = [SuperAdmin, ]
+
+            class DefaultAdmin(*classes):
+                if getattr(model, 'Admin', None):
+                    list_display = model.Admin.list_display
+                    list_filter = model.Admin.list_filter
+                else:
+                    try:
+                        model._meta.get_field('name')
+                        model._meta.get_field('description')
+                    except FieldDoesNotExist:
+                        pass
+                    else:
+                        list_display = ['name', 'description']
+
+            admin.site.register(model, DefaultAdmin)
+
+        except AlreadyRegistered:
+            pass
+
+
 # admin.site.register(FlatPage, MyFlatPageAdmin)
 
 # @admin.register(ContentType)
