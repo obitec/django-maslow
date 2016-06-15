@@ -73,3 +73,11 @@ def build(docs=False):
 @task
 def runserver():
     run("python tests/manage.py runserver",)
+
+@task
+def contribute():
+    run('pyvenv3.5 env')
+    run('. env/bin/activate')
+    run('pip install -r requirements.txt')
+    build(docs=True)
+
