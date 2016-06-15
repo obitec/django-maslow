@@ -46,3 +46,4 @@ jsonify.is_safe = True
 register.filter('subtract', subtract)
 register.filter('multiply', multiply)
 register.filter('divide', divide)
+
