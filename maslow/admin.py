@@ -1,5 +1,7 @@
 from django import forms
 from django.contrib import admin
+from django.apps import apps
+from django.contrib.admin.sites import AlreadyRegistered
 from django.core.exceptions import FieldDoesNotExist
 from ckeditor.widgets import CKEditorWidget
 from django.contrib.auth.models import Permission
