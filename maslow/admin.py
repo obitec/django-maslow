@@ -111,7 +111,7 @@ class MyFlatPageAdmin(FlatPageAdmin):
     form = FlatPageAdminForm
 
 
-def auto_register(app_name: str = '', admin_site = None):
+def auto_register(app_name: str = '', admin_site=None):
     app_models = apps.get_app_config(app_name).get_models()
     for model in app_models:
         try:
@@ -152,13 +152,12 @@ def auto_register(app_name: str = '', admin_site = None):
 def update_node_positions(node, mode):
     """
     Procedure to update the node positions
-    Three different modes available:
-        1 = insert node
-        2 = update position, parent stays the same
-        3 = update position and change parent
-        4 = trashed
+    Three different modes available
+    1 = insert node
+    2 = update position, parent stays the same
+    3 = update position and change parent
+    4 = trashed
     """
-
     if mode == 1 or mode == 3:
         # if node has been inserted at the beginning
         if node.position == 1:
@@ -166,25 +165,37 @@ def update_node_positions(node, mode):
         # if node has been inserted not at beginning and not at the last position
         elif node.position != node.get_siblings().count() + 1:
             # update positions of siblings right of node by one
-            node.get_siblings().filter(position__gte=node.position).update(position=F('position') + 1)
+            node.get_siblings().filter(
+                position__gte=node.position).update(position=F('position') + 1)
+
         if mode == 3:
-            # since we removed the node from a parent, we have to decrement the positions of the former siblings
+            # since we removed the node from a parent,
+            # we have to decrement the positions of the former siblings
             # right of the node by one
             if node._original_parent is not None:
-                # do updates only for nodes which had a parent before. will not be executed for root nodes
-                node._original_parent.get_children().filter(position__gt=node._original_position).update(
-                    position=F('position') - 1)
+                # do updates only for nodes which had a parent before.
+                # will not be executed for root nodes
+                node._original_parent.get_children().filter(
+                    position__gt=node._original_position).update(position=F('position') - 1)
     if mode == 2:
-        # if old position is left of new position -> decrement position by 1 for nodes which have
-        #  position <= node.position AND > node.original_position
+        # if old position is left of new position -> decrement position by 1
+        # for nodes which have
+        # position <= node.position AND > node.original_position
         if node.position > node._original_position:
-            node.get_siblings().filter(Q(position__lte=node.position) & Q(position__gt=node._original_position)).update(
-                position=F('position') - 1)
-        # if old position is right of new position -> increment position by 1 for nodes which have position >= node.
+            node.get_siblings().filter(
+                Q(position__lte=node.position) &
+                Q(position__gt=node._original_position)
+            ).update(position=F('position') - 1)
+        # if old position is right of new position -> increment position by 1
+        # for nodes which have position >= node.
         # position AND < node.original_position
         if node.position < node._original_position:
-            node.get_siblings().filter(Q(position__gte=node.position) & Q(position__lt=node._original_position)).update(
-                position=F('position') + 1)
+            node.get_siblings().filter(
+                Q(position__gte=node.position) &
+                Q(position__lt=node._original_position)
+            ).update(position=F('position') + 1)
     if mode == 4:
-        # decrement position by 1 for nodes which have position > node.position
-        node.get_siblings().filter(Q(position__gt=node.position)).update(position=F('position') - 1)
+        # decrement position by 1 for nodes which
+        # have position > node.position
+        node.get_siblings().filter(Q(position__gt=node.position)).update(
+            position=F('position') - 1)
