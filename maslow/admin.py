@@ -12,11 +12,11 @@ from django.contrib.flatpages.models import FlatPage
 from django.db.models import F, Q
 from django.utils.translation import ugettext_lazy
 from django.utils.translation import ugettext as _
-from feincms.admin.tree_editor import TreeEditor
 from guardian.admin import GuardedModelAdmin
 from import_export.admin import ImportExportActionModelAdmin
 from mptt.forms import MPTTAdminForm
 from reversion.admin import VersionAdmin
+from mptt.admin import DraggableMPTTAdmin
 from .views import TestView
 
 
@@ -24,7 +24,8 @@ class SuperAdmin(ImportExportActionModelAdmin, VersionAdmin, GuardedModelAdmin):
     pass
 
 
-class MPTTAdmin(TreeEditor):
+# class MPTTAdmin(TreeEditor):
+class MPTTAdmin(DraggableMPTTAdmin):
     """
     A ModelAdmin to add changelist tree view and editing capabilities.
     Requires FeinCMS to be installed.
