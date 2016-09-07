@@ -24,52 +24,6 @@ class SuperAdmin(ImportExportActionModelAdmin, VersionAdmin, GuardedModelAdmin):
     pass
 
 
-# class MPTTAdmin(TreeEditor):
-class MPTTAdmin(DraggableMPTTAdmin):
-    """
-    A ModelAdmin to add changelist tree view and editing capabilities.
-    Requires FeinCMS to be installed.
-    """
-
-    form = MPTTAdminForm
-    mptt_level_indent = 20
-
-    def _actions_column(self, obj):
-        actions = []  # super(FeinCMSModelAdmin, self)._actions_column(obj)
-        glyph_template = '<span class="glyphicon glyphicon-{icon}" aria-hidden="true"></span>'
-
-        if hasattr(obj, 'get_absolute_url'):
-            actions.append('&nbsp; <a href="%s" title="%s" target="_blank">%s</a>' % (
-                obj.get_absolute_url(), _('View item'), glyph_template.format(icon='search')))
-
-        actions.append('&nbsp; <a href="add/?%s=%s" title="%s">%s</a>' % (
-            self.model._mptt_meta.parent_attr, obj.pk, _('Add child'), glyph_template.format(icon='plus')))
-
-        actions.append(
-            '&nbsp; <a><div class="drag_handle" style="background: inherit;">%s</div></a>' % glyph_template.format(
-                icon='move'))
-
-        return actions
-
-    def delete_selected_tree(self, modeladmin, request, queryset):
-        """
-        Deletes multiple instances and makes sure the MPTT fields get recalculated properly.
-        (Because merely doing a bulk delete doesn't trigger the post_delete hooks.)
-        """
-        n = 0
-        for obj in queryset:
-            obj.delete()
-            n += 1
-        self.message_user(request, _("Successfully deleted %s items.") % n)
-
-    def get_actions(self, request):
-        actions = super(MPTTAdmin, self).get_actions(request)
-        if 'delete_selected' in actions:
-            actions['delete_selected'] = (
-                self.delete_selected_tree, 'delete_selected', _("Delete selected %(verbose_name_plural)s"))
-        return actions
-
-
 class CustomAdminSite(admin.AdminSite):
     # Text to put at the end of each page's <title>.
     site_title = ugettext_lazy('Django site admin')
@@ -117,15 +71,17 @@ def auto_register(app_name: str = '', admin_site=None):
     for model in app_models:
         try:
             if getattr(model, '_mptt_meta', None):
-                classes = [MPTTAdmin, SuperAdmin, ]
-
+                classes = [DraggableMPTTAdmin, SuperAdmin, ]
             else:
                 classes = [SuperAdmin, ]
 
             class DefaultAdmin(*classes):
+                list_display = ['__str__',]
                 if getattr(model, 'Admin', None):
                     list_display = model.Admin.list_display
                     list_filter = model.Admin.list_filter
+                if getattr(model, '_mptt_meta', None):
+                    list_display = ['indented_title', ] + list_display
                 else:
                     try:
                         model._meta.get_field('name')
