@@ -125,6 +125,8 @@ class Thing(MPTTModel):
     # TODO: Make order mean something.
     position = models.PositiveIntegerField(blank=True, default=0)
 
+    image = models.ImageField(null=True, blank=True)
+
     # def get_absolute_url(self):
     #     return reverse('assessment:thing_detail', kwargs={'pk': str(self.id)})
 
