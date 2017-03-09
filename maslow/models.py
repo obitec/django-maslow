@@ -89,6 +89,7 @@ class Thing(MPTTModel):
 
     """
     name = models.CharField(max_length=250)
+    display_name = models.CharField(max_length=254, blank=True, default="")
     description = models.TextField(blank=True, default='')
 
     AP = 'AP'
@@ -131,7 +132,7 @@ class Thing(MPTTModel):
     #     return reverse('assessment:thing_detail', kwargs={'pk': str(self.id)})
 
     def __str__(self):
-        return self.name
+        return self.display_name or self.name
 
     def save(self, *args, **kwargs):
         with reversion.create_revision():
