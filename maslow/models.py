@@ -118,10 +118,12 @@ class Thing(MPTTModel):
         default=INFORMATIONAL, verbose_name=_('Is the object physical or informatical?'),
         help_text=_('https://en.wikipedia.org/wiki/Object_Process_Methodology#OPM_Things'))
 
-    parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
+    parent = TreeForeignKey(
+        'self', null=True, blank=True, related_name='children', db_index=True, on_delete=models.CASCADE)
 
     data = JSONField(blank=True, null=True)
-    data_form = models.ForeignKey(FlatPage, null=True, blank=True, related_name='%(class)s_data_form')
+    data_form = models.ForeignKey(
+        FlatPage, null=True, blank=True, related_name='%(class)s_data_form', on_delete=models.CASCADE)
 
     # TODO: Make order mean something.
     position = models.PositiveIntegerField(blank=True, default=0)
