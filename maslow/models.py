@@ -35,7 +35,7 @@ class NaturalModel(models.Model):
 
 
 class DataForm(NaturalModel):
-    form = models.TextField(blank=True, verbose_name=_('Data form'))
+    form = models.TextField(blank=True, verbose_name=_('Data form'), default='')
 
     # calculated_values = ArrayField(models.CharField(max_length=100))
     # action = models.CharField()
@@ -45,7 +45,7 @@ class DataForm(NaturalModel):
 
 
 class DataMixin(models.Model):
-    description = models.TextField(verbose_name=_('Description'), blank=True)
+    description = models.TextField(verbose_name=_('Description'), blank=True, default='')
     extra_data = JSONField(verbose_name=_('Extra data'), null=True, blank=True)
 
     # data_form = models.ForeignKey(DataForm, null=True, blank=True)

@@ -90,6 +90,7 @@ def auto_register(app_name: str = '', admin_site=None):
                         pass
                     else:
                         list_display = ['name', 'description']
+                        search_fields = ['name', ]
 
             if not admin_site:
                 admin.site.register(model, DefaultAdmin)
